@@ -31,13 +31,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 }
 
 void AMovingPlatform::MovePlatform(float DeltaTime) {
-	FVector CurrentLocation = GetActorLocation();
-	CurrentLocation += PlatformVelocity * DeltaTime;
-	SetActorLocation(CurrentLocation);
-	float DistanceMoved = FVector::Dist(StartLocation, CurrentLocation);
-	if (DistanceMoved > MoveDistance) {
-		float OverShoot = DistanceMoved - MoveDistance;
-		UE_LOG(LogTemp, Display, TEXT("## %s overshoot: %f"), *GetName(), OverShoot);
+	if (ShouldPlatformReturn()) {
 		// Platform may over moved than expected endpoint. Caculate exact wanted endpoint and reposition it.
 		FVector MoveDirection = PlatformVelocity.GetSafeNormal();
 		StartLocation = StartLocation + MoveDirection * MoveDistance;
@@ -45,9 +39,21 @@ void AMovingPlatform::MovePlatform(float DeltaTime) {
 
 		PlatformVelocity = -PlatformVelocity;
 	}
+	else {
+		FVector CurrentLocation = GetActorLocation();
+		CurrentLocation += PlatformVelocity * DeltaTime;
+		SetActorLocation(CurrentLocation);
+	}
 
 }
 void AMovingPlatform::RotatePlatform(float DeltaTime) {
 	UE_LOG(LogTemp, Display, TEXT("## %s rotate platform f "), *GetName());
 
+}
+
+bool AMovingPlatform::ShouldPlatformReturn() const {
+	return GetDistanceMoved() > MoveDistance;
+}
+float AMovingPlatform::GetDistanceMoved() const {
+	return FVector::Dist(StartLocation, GetActorLocation());
 }
