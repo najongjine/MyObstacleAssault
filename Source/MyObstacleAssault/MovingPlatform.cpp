@@ -30,6 +30,8 @@ void AMovingPlatform::Tick(float DeltaTime)
 	SetActorLocation(CurrentLocation);
 	float DistanceMoved = FVector::Dist(StartLocation, CurrentLocation);
 	if (DistanceMoved > MoveDistance) {
+		float OverShoot = DistanceMoved - MoveDistance;
+		UE_LOG(LogTemp,Display,TEXT("## %s overshoot: %f"), *GetName(), OverShoot);
 		// Platform may over moved than expected endpoint. Caculate exact wanted endpoint and reposition it.
 		FVector MoveDirection = PlatformVelocity.GetSafeNormal();
 		StartLocation = StartLocation + MoveDirection * MoveDistance;
