@@ -33,5 +33,6 @@ private:
 
 	FVector StartLocation;
 
-	void MovePlatform();
+	void MovePlatform(float DeltaTime);
+	void RotatePlatform(float DeltaTime);
 };
